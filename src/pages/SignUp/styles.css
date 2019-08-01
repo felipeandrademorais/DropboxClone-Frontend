@@ -14,7 +14,7 @@
 
 #main-container form input {
     height: 48px;
-    border: 1px solid #ddd;
+    border: 1px solid #aaa;
     border-radius: 4px;
     font-size: 16px;
     padding: 0 20px;
@@ -23,7 +23,7 @@
 
 #main-container form button {
     height: 48px;
-    background: #7159c1;
+    background: #027fbd;
     border-radius: 4px;
     font-size: 16px;
     padding: 0 20px;
@@ -36,4 +36,10 @@
 
 #main-container form button:hover {
     opacity: 0.8;
+}
+
+#main-container form img {
+    width: 320px;
+    position: relative;
+    left:-20px;
 }

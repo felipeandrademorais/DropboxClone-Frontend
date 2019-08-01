@@ -3,43 +3,48 @@ import { MdInsertDriveFile } from 'react-icons/md';
 import api from '../../services/api';
 import {distanceInWords} from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.jpg";
 import Dropzone from 'react-dropzone';
 import "./styles.css";
 import socket from "socket.io-client";
+import {getUserId} from '../../services/auth';
 
 export default class Box extends Component {
   state = { box: {}}
 
   async componentDidMount(){
     this.subscribeToNewFiles();
-
-    const box = this.props.match.params.id;
+    const box = getUserId();
     const response = await api.get(`boxes/${box}`); 
-
     this.setState({ box: response.data });
   }
 
   subscribeToNewFiles = () => {
-    const box = this.props.match.params.id;
-    const io = socket('https://googledriveclone.herokuapp.com');
+    const box = getUserId();
 
-    io.emit('connectRoom', box);
-    io.on('file', data => {
-      this.setState({ box: {... this.state.box, files: [data, ... this.state.box.files ] }});
-    });
+    try{
+
+      const io = socket('http://localhost:3001');
+      io.emit('connectRoom', box);
+      io.on('file', data => {
+        this.setState({ box: {... this.state.box, files: [data, ... this.state.box.files ] }});
+      });
+
+    } catch(err){
+      console.log(err);
+    }
+    
   }
 
   handleUpload = files => {
     files.forEach(file => {
       const data = new FormData();
-      const box = this.props.match.params.id;
+      const box = getUserId();
 
       data.append('file', file);
-
-      console.log(data);
-
       api.post(`boxes/${box}/files`, data);
+      this.subscribeToNewFiles();
+    
     });
   };
 
